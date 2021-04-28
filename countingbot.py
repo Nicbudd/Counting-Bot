@@ -66,21 +66,32 @@ async def on_message(message):
 
                 if ispalin(num):
                     await message.add_reaction(discord.utils.get(client.emojis, name="palindrome"))
+                    print("Palindrome!")
+                    print(message.content)
+                    print(message)
+                    print("")
+
 
                 if "69" in num:
                     await message.add_reaction("🍆")
                     print("🍆")
+                    print(message.content)
                     print(message)
+                    print("")
 
                 if "420" in num:
                     await message.add_reaction(discord.utils.get(client.emojis, name="weedwalk"))
                     print("Blaze it")
+                    print(message.content)
                     print(message)
+                    print("")
 
                 if "666" in num:
                     await message.add_reaction("😈")
                     print("😈")
+                    print(message.content)
                     print(message)
+                    print("")
 
     else:
 
