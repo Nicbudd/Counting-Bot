@@ -75,7 +75,7 @@ def auscoin(message):
             userAccount[0] = int(userAccount[0])
             userAccount[1] = int(userAccount[1])
 
-            if command == "free" and user.id == 396730242460418058:
+            if command == "free" and user.id == austin:
                 userAccount[1] += 1
                 print(userAccount[1])
                 returnMessage = f"Added 1 {nohio} to your account for free! Balance: {userAccount[1]} {nohio}"
