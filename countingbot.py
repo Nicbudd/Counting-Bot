@@ -77,7 +77,7 @@ async def on_message(message):
         if "hi" in message.content.lower() and "counting" in message.content.lower():
             author = message.author.id
             if author == capes:
-                await message.channel.send("Hi Capes!")
+                await message.channel.send("Merp")
             elif author == crapideot:
                 await message.channel.send("Hi Crap!")
             elif author == austin:
@@ -85,7 +85,7 @@ async def on_message(message):
             else:
                 await message.channel.send(f"Hi {message.author.name}")
 
-        if "ohio" in message.content.lower():
+        if "ohio" in message.content.lower() or "oh*o" in message.content.lower():
 
             await message.add_reaction(discord.utils.get(client.emojis, name="nohio"))
 
