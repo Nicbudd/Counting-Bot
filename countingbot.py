@@ -40,7 +40,7 @@ def auscoin(message):
     nohio = discord.utils.get(client.emojis, name="nohio")
 
     if command == "help":
-        return f"```nhi bal - Prints your balance \nnhi d20 - Roll a d20. If you roll a nat 20, you get 20 nohio.\nMore to come soon!```"
+        return f"`nhi bal` - Prints your balance.\n**Once a day:** \n`nhi d20` - Roll a d20. If you roll a nat 20, you get 20 {nohio}.\n`nhi d100` - Roll a d100. If you roll a nat 100, you get 100 {nohio}.\n`nhi 50/50` - Roll a 50/50 chance of getting 3 {nohio}.\nMore to come soon!"
 
     else:
 
@@ -70,7 +70,7 @@ def auscoin(message):
                 bank.append(userAccount)
                 print("New account opened")
 
-             #special bits
+            #special bits
 
             userAccount[0] = int(userAccount[0])
             userAccount[1] = int(userAccount[1])
@@ -81,24 +81,41 @@ def auscoin(message):
                 returnMessage = f"Added 1 {nohio} to your account for free! Balance: {userAccount[1]} {nohio}"
 
             elif command == "bal" or command == "balance":
-                returnMessage = "Balance: {userAccount[1]} {nohio}"
+                returnMessage = f"Balance: {userAccount[1]} {nohio}"
             else:
                 print(time)
                 print(userAccount[2])
-                if str(time) == str(userAccount[2]):
+                if str(time) == str(userAccount[2]) and not(user.id == austin):
                     print("hello")
                     returnMessage = f"Sorry, you redeemed your {nohio} for today. Come back tomorrow."
 
-                elif command == "d20" or command == "D20":
+                elif command == "d20" or command == "D20" or command == "20":
                     r = random.randint(1, 20)
 
                     if r == 20:
                         userAccount[1] += 20
-                        truthString = f"NAT 20! Added 20 {nohio} to your account."
+                        returnMessage = f"Rolled a NAT 20! Added 20 {nohio} to your account. Balance: {userAccount[1]} {nohio}"
                     else:
-                        truthString = f"{r}. No {nohio} for you."
+                        returnMessage = f"Rolled a {r}. No {nohio} for you. Balance: {userAccount[1]} {nohio}"
 
-                    returnMessage = f"Rolled a {truthString} Balance: {userAccount[1]} {nohio}"
+                elif command == "d100" or command == "D100" or command == "100":
+                    r = random.randint(1, 100)
+
+                    if r == 100:
+                        userAccount[1] += 100
+                        returnMessage = f"Rolled a 100 wtf!! Added 100 {nohio} to your account. Balance: {userAccount[1]} {nohio}"
+                    else:
+                        returnMessage = f"Rolled a {r}. No {nohio} for you. Balance: {userAccount[1]} {nohio}"
+
+                elif command == "5050" or command == "50-50" or command == "50/50":
+                    r = random.randint(1, 2)
+
+                    if r == 1:
+                        userAccount[1] += 3
+                        returnMessage = f"You won the 50/50! Added 3 {nohio} to your account. Balance: {userAccount[1]} {nohio}"
+                    else:
+                        returnMessage = f"You lost the 50/50. No {nohio} for you. Balance: {userAccount[1]} {nohio}"
+
                 else:
                     returnMessage = "Command not found"
 
