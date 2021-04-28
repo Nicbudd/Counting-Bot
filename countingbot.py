@@ -24,7 +24,6 @@ client = discord.Client()
 async def on_ready():
     print("We have logged in as {0.user}".format(client))
 
-    print("🍆")
 
 capes = 297909505621098496
 austin = 396730242460418058
@@ -70,12 +69,18 @@ async def on_message(message):
 
                 if "69" in num:
                     await message.add_reaction("🍆")
+                    print("🍆")
+                    print(message)
 
                 if "420" in num:
                     await message.add_reaction(discord.utils.get(client.emojis, name="weedwalk"))
+                    print("Blaze it")
+                    print(message)
 
                 if "666" in num:
                     await message.add_reaction("😈")
+                    print("😈")
+                    print(message)
 
     else:
 
