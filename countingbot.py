@@ -30,7 +30,17 @@ crapideot = 736864788927217696
 
 countServ = 830823587417030677
 
+triesPerDay = 5
+
+def balanceMessage(userAccount):
+    nohio = discord.utils.get(client.emojis, name="nohio")
+    return(f"\nBalance: {userAccount[1]} {nohio}, {triesPerDay - userAccount[3]} tries left")
+
+
 def auscoin(message):
+
+    gambaTries = 3
+
     user = message.author
     messageBits = message.content.split(" ")
     command = messageBits[1]
@@ -40,7 +50,7 @@ def auscoin(message):
     nohio = discord.utils.get(client.emojis, name="nohio")
 
     if command == "help":
-        return f"`nhi bal` - Prints your balance.\n**Once a day:** \n`nhi d20` - Roll a d20. If you roll a nat 20, you get 20 {nohio}.\n`nhi d100` - Roll a d100. If you roll a nat 100, you get 100 {nohio}.\n`nhi 50/50` - Roll a 50/50 chance of getting 3 {nohio}.\nMore to come soon!"
+        return f"**Each user gets 5 tries a day.**\n`nhi bal` - Prints your balance.\n**1 Try:** \n`nhi d20` - Roll a d20. If you roll a nat 20, you get 20 {nohio}.\n`nhi d100` - Roll a d100. If you roll a nat 100, you get 100 {nohio}.\n`nhi 50/50` - Roll a 50/50 chance of getting 3 {nohio}.\n`nhi states` - Random US State, and you get 2 {nohio}. Don't get Ohio.\n**3 Tries:**\n`nhi gamble` - Do you wanna take the gamba? Big rewards, big losses."
 
     else:
 
@@ -62,63 +72,132 @@ def auscoin(message):
                 if str(user.id) == account[0]:
                     userAccount = account
                     accFound = True
-                    print("Account found!" + ",".join(userAccount))
                     break
 
             if not(accFound):
-                userAccount = [str(user.id), "0", str(time)]
+                userAccount = [str(user.id), "0", str(time), "0"]
                 bank.append(userAccount)
-                print("New account opened")
 
             #special bits
 
             userAccount[0] = int(userAccount[0])
             userAccount[1] = int(userAccount[1])
+            userAccount[3] = int(userAccount[3])
 
             if command == "free" and user.id == austin:
                 userAccount[1] += 1
-                print(userAccount[1])
-                returnMessage = f"Added 1 {nohio} to your account for free! Balance: {userAccount[1]} {nohio}"
+                returnMessage = f"Added 1 {nohio} to your account for free! {balanceMessage(userAccount)}"
 
             elif command == "bal" or command == "balance":
-                returnMessage = f"Balance: {userAccount[1]} {nohio}"
+                returnMessage = f"{balanceMessage(userAccount)}"
             else:
-                print(time)
-                print(userAccount[2])
-                if str(time) == str(userAccount[2]) and not(user.id == austin):
-                    print("hello")
+
+                if not(str(time) == str(userAccount[2])):
+                    userAccount[3] = 0
+                    userAccount[2] = time
+
+                if not(userAccount[3] >= triesPerDay) or user.id == austin:
+                    userAccount[3] += 1
                     returnMessage = f"Sorry, you redeemed your {nohio} for today. Come back tomorrow."
 
-                elif command == "d20" or command == "D20" or command == "20":
-                    r = random.randint(1, 20)
+                    if command == "d20" or command == "D20" or command == "20":
+                        r = random.randint(1, 20)
 
-                    if r == 20:
-                        userAccount[1] += 20
-                        returnMessage = f"Rolled a NAT 20! Added 20 {nohio} to your account. Balance: {userAccount[1]} {nohio}"
+                        if r == 20:
+                            userAccount[1] += 20
+                            returnMessage = f"Rolled a NAT 20! Added 20 {nohio} to your account. {balanceMessage(userAccount)}"
+                        else:
+                            returnMessage = f"Rolled a {r}. No {nohio} for you. {balanceMessage(userAccount)}"
+
+                    elif command == "d100" or command == "D100" or command == "100":
+                        r = random.randint(1, 100)
+
+                        if r == 100:
+                            userAccount[1] += 100
+                            returnMessage = f"Rolled a 100 wtf!! Added 100 {nohio} to your account. {balanceMessage(userAccount)}"
+                        else:
+                            returnMessage = f"Rolled a {r}. No {nohio} for you. {balanceMessage(userAccount)}"
+
+                    elif command == "5050" or command == "50-50" or command == "50/50":
+                        r = random.randint(1, 2)
+
+                        if r == 1:
+                            userAccount[1] += 3
+                            returnMessage = f"You won the 50/50! Added 3 {nohio} to your account. {balanceMessage(userAccount)}"
+                        else:
+                            returnMessage = f"You lost the 50/50. No {nohio} for you. {balanceMessage(userAccount)}"
+
+                    elif command == "gamble" or command == "gamba":
+                        userAccount[3] -= 1
+                        if gambaTries > triesPerDay - userAccount[3]:
+                            returnMessage = f"Not enough tries today. Gamba costs {gambaTries} tries to play. {balanceMessage(userAccount)}"
+                        else:
+                            userAccount[3] += 3
+                            r = random.randint(1, 20)
+
+                            if r == 1:
+                                userAccount[1] *= 2
+                                returnMessage = f"BIG WIN! Your balance is doubled! {balanceMessage(userAccount)}"
+                            elif r == 2:
+                                userAccount[1] = math.floor(userAccount * 0.5)
+                                returnMessage = f"big loss. Your balance is cut in half. {balanceMessage(userAccount)}"
+                            elif r == 3:
+                                userAccount[1] += 100
+                                returnMessage = f"You gain 100 {nohio}! Yay! {balanceMessage(userAccount)}"
+                            elif r == 4:
+                                userAccount[1] -= 100
+                                if userAccount[1] < 0:
+                                    userAccount[1] = 0
+                                returnMessage = f"You lose 100 {nohio}. Not Pog. {balanceMessage(userAccount)}"
+                            elif r <= 6:
+                                userAccount[1] += 5
+                                returnMessage = f"You win 5 {nohio}. {balanceMessage(userAccount)}"
+                            elif r <= 8:
+                                userAccount[1] -= 1
+                                if userAccount[1] < 0:
+                                    userAccount[1] = 0
+                                returnMessage = f"You lose 1 {nohio}. {balanceMessage(userAccount)}"
+                            elif r <= 10:
+                                userAccount[1] -= 2
+                                if userAccount[1] < 0:
+                                    userAccount[1] = 0
+                                returnMessage = f"You lose 2 {nohio}. {balanceMessage(userAccount)}"
+                            elif r <= 12:
+                                userAccount[1] -= 5
+                                if userAccount[1] < 0:
+                                    userAccount[1] = 0
+                                returnMessage = f"You lose 5 {nohio}. {balanceMessage(userAccount)}"
+                            elif r <= 14:
+                                userAccount[1] += 1
+                                returnMessage = f"You win 1 {nohio}. {balanceMessage(userAccount)}"
+                            elif r <= 16:
+                                userAccount[1] += 2
+                                returnMessage = f"You win 2 {nohio}. {balanceMessage(userAccount)}"
+                            else:
+                                returnMessage = f"You win nothing. {balanceMessage(userAccount)}"
+
+
+                    elif command == "state" or command == "states":
+                        r = random.randint(1, 50)
+                        states = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
+                        yourState = states[r]
+
+                        if yourState == "Ohio":
+                            userAccount[1] -= 50
+                            if userAccount[1] < 0:
+                                userAccount[1] = 0
+
+                            returnMessage = f"Well shit. It was Ohio. 50 points deducted from your account. {balanceMessage(userAccount)}"
+                        else:
+                            userAccount[1] += 2
+                            returnMessage = f"You got {yourState}, you get 2 {nohio}. {balanceMessage(userAccount)}"
+
                     else:
-                        returnMessage = f"Rolled a {r}. No {nohio} for you. Balance: {userAccount[1]} {nohio}"
-
-                elif command == "d100" or command == "D100" or command == "100":
-                    r = random.randint(1, 100)
-
-                    if r == 100:
-                        userAccount[1] += 100
-                        returnMessage = f"Rolled a 100 wtf!! Added 100 {nohio} to your account. Balance: {userAccount[1]} {nohio}"
-                    else:
-                        returnMessage = f"Rolled a {r}. No {nohio} for you. Balance: {userAccount[1]} {nohio}"
-
-                elif command == "5050" or command == "50-50" or command == "50/50":
-                    r = random.randint(1, 2)
-
-                    if r == 1:
-                        userAccount[1] += 3
-                        returnMessage = f"You won the 50/50! Added 3 {nohio} to your account. Balance: {userAccount[1]} {nohio}"
-                    else:
-                        returnMessage = f"You lost the 50/50. No {nohio} for you. Balance: {userAccount[1]} {nohio}"
+                        returnMessage = "Command not found"
+                        userAccount[3] -= 1
 
                 else:
-                    returnMessage = "Command not found"
-
+                    returnMessage = "Sorry, you've used up all your tries. Come back tomorrow."
 
         file.close()
 
@@ -219,11 +298,17 @@ async def on_message(message):
         except:
             ohioan = False
         else:
-            ohioan = True
+            if ohioan == None:
+                ohioan = False
+            else:
+                ohioan = True
 
         if ohioan:
-            if random.randint(1, 100) == 69:
+            r = random.randint(1, 50)
+            if r == 1:
                 await message.channel.send("Shut up OHIOAN")
+            elif r == 2:
+                await message.channel.send("Ohioan Detected")
 
 
 
