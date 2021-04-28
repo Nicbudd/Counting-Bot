@@ -24,6 +24,7 @@ client = discord.Client()
 async def on_ready():
     print("We have logged in as {0.user}".format(client))
 
+    print("🍆")
 
 capes = 297909505621098496
 austin = 396730242460418058
@@ -37,27 +38,7 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    #palin calculator
 
-    digit_len = 0
-    cont = message.content
-
-    for letter in range(1, len(cont)+1):
-        try:
-            num = int(cont[:letter])
-        except ValueError:
-            if cont[:letter] == "-":
-                digit_len += 1
-            else:
-                break
-        else:
-            digit_len += 1
-
-    if digit_len > 0:
-        num = message.content[:digit_len]
-
-        if ispalin(num):
-            await message.add_reaction(discord.utils.get(client.emojis, name="palindrome"))
 
     #check to make sure we don't post cringe to counting server
     try:
@@ -70,8 +51,33 @@ async def on_message(message):
         else:
             testCountServ = False
 
-    #if not counting server
-    if not(testCountServ):
+    #if counting server
+    if testCountServ:
+
+        #if its a counting channel
+        if not(message.channel.name == "not-counting"):
+
+            num = ""
+
+            for x in message.content:
+                if x.isdigit():
+                    num += x
+
+            if not(num == ""):
+
+                if ispalin(num):
+                    await message.add_reaction(discord.utils.get(client.emojis, name="palindrome"))
+
+                if "69" in num:
+                    await message.add_reaction("🍆")
+
+                if "420" in num:
+                    await message.add_reaction(discord.utils.get(client.emojis, name="weedwalk"))
+
+                if "666" in num:
+                    await message.add_reaction("😈")
+
+    else:
 
         #post cringe
         if "hi" in message.content.lower() and "counting" in message.content.lower():
