@@ -1,5 +1,6 @@
 import math
 import discord
+from discord import Spotify
 import os
 import random
 
@@ -111,9 +112,18 @@ async def on_message(message):
 
             await message.add_reaction(discord.utils.get(client.emojis, name="nohio"))
 
-        if not(discord.utils.get(message.author.roles, name="Ohioan") == None):
+        try:
+            ohioan = discord.utils.get(message.author.roles, name="Ohioan")
+        except:
+            ohioan = False
+        else:
+            ohioan = True
+
+        if ohioan:
             if random.randint(1, 100) == 69:
                 await message.channel.send("Shut up OHIOAN")
+
+
 
 
 file = open("C:\TokenFolder\countingtoken.txt", "r")
