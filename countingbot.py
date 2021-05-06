@@ -1,4 +1,4 @@
-import math, discord, random, csv, datetime
+import math, discord, random, csv, datetime, requests
 import os
 
 
@@ -62,6 +62,24 @@ def auscoin(message):
         else:
             bank = list(csv.reader(file, delimiter=","))
 
+            userQuery = message.author.id
+
+            """ if (command == "addBal" or command == "addbal" or command == "addTries" or command == "addtries") and user.id == austin:
+                value = int(messageBits[2])
+                print(messageBits[2])
+                print(messageBits[3])
+
+                try:
+                    target = discord.utils.get(message.guild.users, name=messageBits[3])
+                    userQuery = target.id
+                except:
+                    try:
+                        target = discord.utils.get(message.guild.users, nick=messageBits[3])
+                        userQuery = target.id
+                    except:
+                        return ("Could not find user")"""
+
+
             returnMessage = ""
 
             userAccount = []
@@ -69,13 +87,13 @@ def auscoin(message):
             accFound = False
 
             for account in bank:
-                if str(user.id) == account[0]:
+                if str(userQuery) == account[0]:
                     userAccount = account
                     accFound = True
                     break
 
             if not(accFound):
-                userAccount = [str(user.id), "0", str(time), "0"]
+                userAccount = [str(userQuery), "0", str(time), "0"]
                 bank.append(userAccount)
 
             #special bits
@@ -90,6 +108,7 @@ def auscoin(message):
 
             elif command == "bal" or command == "balance":
                 returnMessage = f"{balanceMessage(userAccount)}"
+
             else:
 
                 if not(str(time) == str(userAccount[2])):
@@ -129,7 +148,7 @@ def auscoin(message):
 
                     elif command == "gamble" or command == "gamba":
                         userAccount[3] -= 1
-                        if gambaTries > triesPerDay - userAccount[3]:
+                        if gambaTries > triesPerDay - userAccount[3] and not(user.id == austin):
                             returnMessage = f"Not enough tries today. Gamba costs {gambaTries} tries to play. {balanceMessage(userAccount)}"
                         else:
                             userAccount[3] += 3
@@ -139,7 +158,7 @@ def auscoin(message):
                                 userAccount[1] *= 2
                                 returnMessage = f"BIG WIN! Your balance is doubled! {balanceMessage(userAccount)}"
                             elif r == 2:
-                                userAccount[1] = math.floor(userAccount * 0.5)
+                                userAccount[1] = math.floor(userAccount[1] * 0.5)
                                 returnMessage = f"big loss. Your balance is cut in half. {balanceMessage(userAccount)}"
                             elif r == 3:
                                 userAccount[1] += 100
@@ -178,7 +197,7 @@ def auscoin(message):
 
 
                     elif command == "state" or command == "states":
-                        r = random.randint(1, 50)
+                        r = random.randint(0, 49)
                         states = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
                         yourState = states[r]
 
@@ -188,6 +207,12 @@ def auscoin(message):
                                 userAccount[1] = 0
 
                             returnMessage = f"Well shit. It was Ohio. 50 points deducted from your account. {balanceMessage(userAccount)}"
+
+
+                        elif yourState == "New Hampshire":
+                            userAccount[1] += 5
+                            returnMessage = f"You got New Hampshire! You get 5 {nohio}. {balanceMessage(userAccount)}"
+
                         else:
                             userAccount[1] += 2
                             returnMessage = f"You got {yourState}, you get 2 {nohio}. {balanceMessage(userAccount)}"
@@ -207,7 +232,7 @@ def auscoin(message):
         file.close()
 
         print(returnMessage)
-        return(returnMessage)
+        return returnMessage
 
 @client.event
 async def on_message(message):
@@ -291,7 +316,24 @@ async def on_message(message):
             if "ohio" in message.content.lower() or "oh*o" in message.content.lower():
                 await message.add_reaction(discord.utils.get(client.emojis, name="nohio"))
 
+        if message.content == "counting astronauts":
 
+            response = requests.get("http://api.open-notify.org/astros.json")
+            if response.status_code == 200:
+                parsed = response.json()
+                personStr = ""
+                for person in parsed['people']:
+                    personStr += f"Astronaut: {person['name']}, Craft: {person['craft']}\n"
+                await message.channel.send(personStr)
+            else:
+                print(response.status_code)
+                await message.channel.send(f"HTTP Error: {response.status_code}")
+
+        if message.content == "counting ?":
+            response = requests.get("https://yesno.wtf/api")
+            r = response.json()
+            await message.channel.send(r["answer"].capitalize())
+            await message.channel.send(r["image"])
 
         try:
             ohioan = discord.utils.get(message.author.roles, name="Ohioan")
