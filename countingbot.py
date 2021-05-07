@@ -254,8 +254,8 @@ async def on_message(message):
     #if counting server
     if testCountServ:
 
-        #if its a counting channel
-        if not(message.channel.name == "not-counting"):
+        #if its a counting channel (or austin)
+        if not(message.channel.name == "not-counting") or message.author.id == austin:
 
             num = ""
 
@@ -293,6 +293,19 @@ async def on_message(message):
                     print(message.content)
                     print(message)
                     print("")
+
+                if "fact" in message.content:
+                    url = "http://www.numbersapi.com/" + num
+
+                    fact1 = requests.get(url)
+                    fact2 = requests.get(url + "/math")
+
+                    if fact1.status_code == 200 and fact2.status_code == 200:
+                        fact = fact1.text
+                        mathfact = fact2.text
+                        await message.reply(f"Fact 1: {fact}\nFact 2: {mathfact}")
+                    else:
+                        await message.reply(f"HTTP Error: {fact1.status_code} and {fact2.status_code}.")
 
     else:
 
