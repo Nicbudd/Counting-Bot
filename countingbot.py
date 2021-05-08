@@ -374,6 +374,8 @@ async def on_message(message):
 
 
 
+
+
             elif any(x in message.content for x in ["help", "h"]):
                 await message.channel.send("**Prefix `c`, `counting`, `count`, `cg`:**\n`astronauts` - Shows the astronauts currently in space. - Aliases: `astro`, `astros`.\n`yes/no` - When you're indecisive, ask counting bot, 'yes or no?'. - Aliases: `yesno`, `yes or no`, `y/n` `?`\n`hi` - Hello! - Aliases: `hey`, `sup`, `hello`.\n`pingaustin` - Pings Austin. Annoys the hell out of him. - Aliases: `pinga`, `paustin`, `ping austin`\n\n**Prefix `nohios`,`nohio`, `nhi`:**\n`help` - How to play the nohio minigame (only active in #nohios).\n\nIf something is broken ping the *fuck* out of @AustinDevvania#2702 (you can do this by spamming `c pingaustin`).")
 
