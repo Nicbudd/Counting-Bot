@@ -363,6 +363,8 @@ async def on_message(message):
                 else:
                     await message.channel.send(f"Hi {message.author.name}")
 
+                print(f"Hi from {author}")
+
             elif any(x in message.content for x in ["pingaustin", "pinga", "paustin", "ping austin"]):
 
                 #for ping in range(5):
