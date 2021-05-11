@@ -372,10 +372,12 @@ async def on_message(message):
                 await message.channel.send(f"<@!{message.author.id}>")
                 await message.channel.send("get fucked lmao")
 
+            elif any(x in message.content for x in ["manchester", "KMHT", "manch", "MHT"]):
 
-
-
-
+                response = requests.get("http://mesonet.agron.iastate.edu/json/current.py?station=MHT&network=NH_ASOS")
+                r = response.json()["last_ob"]
+                print(r)
+                await message.channel.send(f"**Manchester NH Latest Observed Weather:**\nObservation Time: {r['local_valid']}\nTemperature: `{r['airtemp[F]']}`°F (Obs. Max: `{r['max_dayairtemp[F]']}`°F, Obs. Min: `{r['min_dayairtemp[F]']}`°F)\nDewpoint: `{r['dewpointtemp[F]']}`°F\nWindspeed: `{r['windspeed[kt]']}`kts\nPressure (Mean Sea Level): `{r['mslp[mb]']}`mb")
 
 
             elif any(x in message.content for x in ["help", "h"]):
