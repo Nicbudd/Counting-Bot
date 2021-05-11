@@ -17,19 +17,6 @@ def ispalin(num):
     return palin
 
 
-client = discord.Client()
-
-@client.event
-async def on_ready():
-    print("We have logged in as {0.user}".format(client))
-
-
-capes = 297909505621098496
-austin = 396730242460418058
-crapideot = 736864788927217696
-
-countServ = 830823587417030677
-
 triesPerDay = 5
 
 def balanceMessage(userAccount):
@@ -38,6 +25,8 @@ def balanceMessage(userAccount):
 
 
 def auscoin(message):
+
+    austin = message.author.id == 396730242460418058  # austin's ID
 
     gambaTries = 3
 
@@ -64,22 +53,6 @@ def auscoin(message):
 
             userQuery = message.author.id
 
-            """ if (command == "addBal" or command == "addbal" or command == "addTries" or command == "addtries") and user.id == austin:
-                value = int(messageBits[2])
-                print(messageBits[2])
-                print(messageBits[3])
-
-                try:
-                    target = discord.utils.get(message.guild.users, name=messageBits[3])
-                    userQuery = target.id
-                except:
-                    try:
-                        target = discord.utils.get(message.guild.users, nick=messageBits[3])
-                        userQuery = target.id
-                    except:
-                        return ("Could not find user")"""
-
-
             returnMessage = ""
 
             userAccount = []
@@ -102,7 +75,7 @@ def auscoin(message):
             userAccount[1] = int(userAccount[1])
             userAccount[3] = int(userAccount[3])
 
-            if command == "free" and user.id == austin:
+            if command == "free" and austin:
                 userAccount[1] += 1
                 returnMessage = f"Added 1 {nohio} to your account for free! {balanceMessage(userAccount)}"
 
@@ -115,7 +88,7 @@ def auscoin(message):
                     userAccount[3] = 0
                     userAccount[2] = time
 
-                if not(userAccount[3] >= triesPerDay) or user.id == austin:
+                if not(userAccount[3] >= triesPerDay) or austin:
                     userAccount[3] += 1
                     returnMessage = f"Sorry, you redeemed your {nohio} for today. Come back tomorrow."
 
@@ -148,8 +121,9 @@ def auscoin(message):
 
                     elif command == "gamble" or command == "gamba":
                         userAccount[3] -= 1
-                        if gambaTries > triesPerDay - userAccount[3] and not(user.id == austin):
+                        if gambaTries > triesPerDay - userAccount[3] and not(austin):
                             returnMessage = f"Not enough tries today. Gamba costs {gambaTries} tries to play. {balanceMessage(userAccount)}"
+
                         else:
                             userAccount[3] += 3
                             r = random.randint(1, 20)
@@ -231,8 +205,16 @@ def auscoin(message):
         bankwriter.writerows(bank)
         file.close()
 
-        print(returnMessage)
+        #print(returnMessage)
         return returnMessage
+
+
+client = discord.Client()
+
+@client.event
+async def on_ready():
+    print("We have logged in as {0.user}".format(client))
+
 
 @client.event
 async def on_message(message):
@@ -240,19 +222,36 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    #check to make sure we don't post cringe to counting server
+    #find the segments of the message
+
+    segments = message.content.split(" ")
+
+    #make some boolean variables to check what type of message it is
+
+    """
+    countServ = counting server
+    directMessage = DMs
+    austin = from Austin (override pretty much everything)
+    """
     try:
         guildId = message.guild.id
     except:
-        testCountServ = False
+        countServ = False
+        directMessage = True
     else:
-        if guildId == countServ:
-            testCountServ = True
+        if guildId == 830823587417030677: #counting server ID
+            countServ = True
         else:
-            testCountServ = False
+            countServ = False
+
+    austin = message.author.id == 396730242460418058 #austin's ID
+
+
+
 
     #if counting server
-    if testCountServ:
+
+    if countServ:
 
         num = ""
 
@@ -266,29 +265,24 @@ async def on_message(message):
                 await message.add_reaction(discord.utils.get(client.emojis, name="palindrome"))
                 print("Palindrome!")
                 print(message.content)
-                print(message)
                 print("")
-
 
             if "69" in num:
                 await message.add_reaction("🍆")
                 print("🍆")
                 print(message.content)
-                print(message)
                 print("")
 
             if "420" in num:
                 await message.add_reaction(discord.utils.get(client.emojis, name="weedwalk"))
                 print("Blaze it")
                 print(message.content)
-                print(message)
                 print("")
 
             if "666" in num:
                 await message.add_reaction("😈")
                 print("😈")
                 print(message.content)
-                print(message)
                 print("")
 
             if "fact" in message.content:
@@ -304,20 +298,11 @@ async def on_message(message):
                 else:
                     await message.reply(f"HTTP Error: {fact1.status_code} and {fact2.status_code}.")
 
+    #otherwise,
+
     else:
 
         #post cringe
-        if "hi" in message.content.lower() and "counting" in message.content.lower():
-            author = message.author.id
-            if author == capes:
-                await message.channel.send("Merp")
-            elif author == crapideot:
-                await message.channel.send("Hi Crap!")
-            elif author == austin:
-                await message.channel.send("Hi Austin!")
-            else:
-                await message.channel.send(f"Hi {message.author.name}")
-
 
         if message.content.startswith("nhi ") or message.content.startswith("nohios ") or message.content.startswith("nohio ") and message.channel.name == "nohios":
             await message.channel.send(auscoin(message))
@@ -325,25 +310,6 @@ async def on_message(message):
         else:
             if "ohio" in message.content.lower() or "oh*o" in message.content.lower():
                 await message.add_reaction(discord.utils.get(client.emojis, name="nohio"))
-
-        if message.content == "counting astronauts":
-
-            response = requests.get("http://api.open-notify.org/astros.json")
-            if response.status_code == 200:
-                parsed = response.json()
-                personStr = ""
-                for person in parsed['people']:
-                    personStr += f"Astronaut: {person['name']}, Craft: {person['craft']}\n"
-                await message.channel.send(personStr)
-            else:
-                print(response.status_code)
-                await message.channel.send(f"HTTP Error: {response.status_code}")
-
-        if message.content == "counting ?":
-            response = requests.get("https://yesno.wtf/api")
-            r = response.json()
-            await message.channel.send(r["answer"].capitalize())
-            await message.channel.send(r["image"])
 
         try:
             ohioan = discord.utils.get(message.author.roles, name="Ohioan")
@@ -362,11 +328,72 @@ async def on_message(message):
             elif r == 2:
                 await message.channel.send("Ohioan Detected")
 
+        #commands
+
+        if message.content.startswith("c ") or message.content.startswith("counting") or message.content.startswith("count") or message.content.startswith("c!") or message.content.startswith("cg "):
+
+
+            if any(x in message.content for x in ["astronauts", "astro", "astros"]):
+
+                response = requests.get("http://api.open-notify.org/astros.json")
+                if response.status_code == 200:
+                    parsed = response.json()
+                    personStr = ""
+                    for person in parsed['people']:
+                        personStr += f"Astronaut: {person['name']}, Craft: {person['craft']}\n"
+                    await message.channel.send(personStr)
+                else:
+                    print(response.status_code)
+                    await message.channel.send(f"HTTP Error: {response.status_code}")
+
+            elif any(x in message.content for x in ["?", "yesno", "yes/no", "yes or no", "y/n"]):
+                response = requests.get("https://yesno.wtf/api")
+                r = response.json()
+                await message.channel.send(r["answer"].capitalize())
+                await message.channel.send(r["image"])
+
+            elif any(x in message.content for x in ["hi", "hello", "hey", "sup"]):
+                author = message.author.id
+                if author == 297909505621098496: #Capes
+                    await message.channel.send("Merp")
+                elif author == 736864788927217696: #Crapideot
+                    await message.channel.send("Hi Crap!")
+                elif austin:
+                    await message.channel.send("Hi Austin!")
+                else:
+                    await message.channel.send(f"Hi {message.author.name}")
+
+            elif any(x in message.content for x in ["pingaustin", "pinga", "paustin", "ping austin"]):
+
+                #for ping in range(5):
+                    #await message.channel.send(f"<@!{message.author.id}>")
+                await message.channel.send(f"<@!{message.author.id}>")
+                await message.channel.send("get fucked lmao")
 
 
 
 
-file = open("token.txt", "r")
+
+
+
+            elif any(x in message.content for x in ["help", "h"]):
+                await message.channel.send("**Prefix `c`, `counting`, `count`, `cg`:**\n`astronauts` - Shows the astronauts currently in space. - Aliases: `astro`, `astros`.\n`yes/no` - When you're indecisive, ask counting bot, 'yes or no?'. - Aliases: `yesno`, `yes or no`, `y/n` `?`\n`hi` - Hello! - Aliases: `hey`, `sup`, `hello`.\n`pingaustin` - Pings Austin. Annoys the hell out of him. - Aliases: `pinga`, `paustin`, `ping austin`\n\n**Prefix `nohios`,`nohio`, `nhi`:**\n`help` - How to play the nohio minigame (only active in #nohios).\n\nIf something is broken ping the *fuck* out of @AustinDevvania#2702 (you can do this by spamming `c pingaustin`).")
+
+            elif any(x in message.content for x in ["shut the fuck up", "stfu"]) and austin:
+                await message.channel.send("Goodnight!")
+                quit()
+
+            else:
+                await message.channel.send("Unknown command. Type `counting help` for help.")
+
+
+        #response = input(f"Response? '{message.content}' from {message.author.name}: ")
+
+        #await message.reply(response)
+
+
+
+file = open("token.config", "r")
 
 for line in file:
     token = line
