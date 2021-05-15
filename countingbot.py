@@ -258,6 +258,10 @@ async def on_message(message):
         for x in message.content:
             if x.isdigit():
                 num += x
+            elif x == "-":
+                continue
+            else:
+                break
 
         if not(num == ""):
 
@@ -395,19 +399,30 @@ async def on_message(message):
                     print(response)
                     await message.channel.send(f"HTTP Error: {response.status_code}. Is this the correct station?")
 
-            elif any(x in message.content for x in ["observations", "obs", "currentweather", "current"]):
 
-                station = segments[2]
-                network = segments[3]
+            elif any(x in message.content for x in ["JSBCINENE", "sillin", "Sillin", "NECAPE"]):
 
-                response = requests.get(f"http://mesonet.agron.iastate.edu/json/current.py?station={station}&network={network}")
-                if response.status_code == 200:
-                    r = response.json()["last_ob"]
-                    print(r)
-                    await message.channel.send(f"**Latest Observed Weather:**\nObservation Time: {r['local_valid']}\nTemperature: `{r['airtemp[F]']}`°F (Obs. Max: `{r['max_dayairtemp[F]']}`°F, Obs. Min: `{r['min_dayairtemp[F]']}`°F)\nDewpoint: `{r['dewpointtemp[F]']}`°F\nWindspeed: `{r['windspeed[kt]']}`kts\nPressure (Mean Sea Level): `{r['mslp[mb]']}`mb")
+                MWN = requests.get("http://mesonet.agron.iastate.edu/json/current.py?station=MWN&network=NH_ASOS")
+
+                IZG = requests.get("http://mesonet.agron.iastate.edu/json/current.py?station=IZG&network=ME_ASOS")
+
+                if MWN.status_code == 200 and IZG.status_code == 200:
+                    MWN = MWN.json()["last_ob"]['airtemp[F]']
+                    IZG = IZG.json()["last_ob"]['airtemp[F]']
+                    diff = round(IZG - MWN, 2)
+                    lapseRate = round(diff * (5/9) / 1.779, 2) #C/km, 1.779km in altitude diff btwn MWN & IZG
+                    if diff >= 30:
+                        await message.channel.send("Signal is Positive! Watch out for powerful convective storms over New England!")
+                    else:
+                        await message.channel.send("Atmosphere is looking a little stable today.")
+
+                    await message.channel.send(f"Mt. Washington, NH: `{MWN}°F`\nFryeburg, ME: `{IZG}°F`\nDifference:`{diff}°F`\nLapse Rate:`{lapseRate}°C/km`")
+
                 else:
-                    print(response)
-                    await message.channel.send(f"HTTP Error: {response.status_code}. Is this the correct station?")
+                    await message.channel.send(f"HTTP Error: {MWN.status_code} and {IZG.status_code}")
+
+
+
 
 
             elif any(x in message.content for x in ["help", "h"]):
