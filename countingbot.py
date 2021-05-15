@@ -375,13 +375,43 @@ async def on_message(message):
             elif any(x in message.content for x in ["manchester", "KMHT", "manch", "MHT"]):
 
                 response = requests.get("http://mesonet.agron.iastate.edu/json/current.py?station=MHT&network=NH_ASOS")
-                r = response.json()["last_ob"]
-                print(r)
-                await message.channel.send(f"**Manchester NH Latest Observed Weather:**\nObservation Time: {r['local_valid']}\nTemperature: `{r['airtemp[F]']}`°F (Obs. Max: `{r['max_dayairtemp[F]']}`°F, Obs. Min: `{r['min_dayairtemp[F]']}`°F)\nDewpoint: `{r['dewpointtemp[F]']}`°F\nWindspeed: `{r['windspeed[kt]']}`kts\nPressure (Mean Sea Level): `{r['mslp[mb]']}`mb")
+
+                if response.status_code == 200:
+                    r = response.json()["last_ob"]
+                    print(r)
+                    await message.channel.send(f"**Manchester NH Latest Observed Weather:**\nObservation Time: {r['local_valid']}\nTemperature: `{r['airtemp[F]']}`°F (Obs. Max: `{r['max_dayairtemp[F]']}`°F, Obs. Min: `{r['min_dayairtemp[F]']}`°F)\nDewpoint: `{r['dewpointtemp[F]']}`°F\nWindspeed: `{r['windspeed[kt]']}`kts\nPressure (Mean Sea Level): `{r['mslp[mb]']}`mb")
+
+            elif any(x in message.content for x in ["observations", "obs", "currentweather", "current"]):
+
+                station = segments[2]
+                network = segments[3]
+
+                response = requests.get(f"http://mesonet.agron.iastate.edu/json/current.py?station={station}&network={network}")
+                if response.status_code == 200:
+                    r = response.json()["last_ob"]
+                    print(r)
+                    await message.channel.send(f"**Latest Observed Weather:**\nObservation Time: {r['local_valid']}\nTemperature: `{r['airtemp[F]']}`°F (Obs. Max: `{r['max_dayairtemp[F]']}`°F, Obs. Min: `{r['min_dayairtemp[F]']}`°F)\nDewpoint: `{r['dewpointtemp[F]']}`°F\nWindspeed: `{r['windspeed[kt]']}`kts\nPressure (Mean Sea Level): `{r['mslp[mb]']}`mb")
+                else:
+                    print(response)
+                    await message.channel.send(f"HTTP Error: {response.status_code}. Is this the correct station?")
+
+            elif any(x in message.content for x in ["observations", "obs", "currentweather", "current"]):
+
+                station = segments[2]
+                network = segments[3]
+
+                response = requests.get(f"http://mesonet.agron.iastate.edu/json/current.py?station={station}&network={network}")
+                if response.status_code == 200:
+                    r = response.json()["last_ob"]
+                    print(r)
+                    await message.channel.send(f"**Latest Observed Weather:**\nObservation Time: {r['local_valid']}\nTemperature: `{r['airtemp[F]']}`°F (Obs. Max: `{r['max_dayairtemp[F]']}`°F, Obs. Min: `{r['min_dayairtemp[F]']}`°F)\nDewpoint: `{r['dewpointtemp[F]']}`°F\nWindspeed: `{r['windspeed[kt]']}`kts\nPressure (Mean Sea Level): `{r['mslp[mb]']}`mb")
+                else:
+                    print(response)
+                    await message.channel.send(f"HTTP Error: {response.status_code}. Is this the correct station?")
 
 
             elif any(x in message.content for x in ["help", "h"]):
-                await message.channel.send("**Prefix `c`, `counting`, `count`, `cg`:**\n`astronauts` - Shows the astronauts currently in space. - Aliases: `astro`, `astros`.\n`yes/no` - When you're indecisive, ask counting bot, 'yes or no?'. - Aliases: `yesno`, `yes or no`, `y/n` `?`\n`hi` - Hello! - Aliases: `hey`, `sup`, `hello`.\n`pingaustin` - Pings Austin. Annoys the hell out of him. - Aliases: `pinga`, `paustin`, `ping austin`\n\n**Prefix `nohios`,`nohio`, `nhi`:**\n`help` - How to play the nohio minigame (only active in #nohios).\n\nIf something is broken ping the *fuck* out of @AustinDevvania#2702 (you can do this by spamming `c pingaustin`).")
+                await message.channel.send("**Prefix `c`, `counting`, `count`, `cg`:**\n`astronauts` - Shows the astronauts currently in space. - Aliases: `astro`, `astros`.\n`yes/no` - When you're indecisive, ask counting bot, 'yes or no?'. - Aliases: `yesno`, `yes or no`, `y/n` `?`\n`hi` - Hello! - Aliases: `hey`, `sup`, `hello`.\n`pingaustin` - Pings Austin. Annoys the hell out of him. - Aliases: `pinga`, `paustin`, `ping austin`\n`manchester` - Current weather in Manchester, NH. - Aliases: `manch`, `KMHT`, `MHT`, \n`observations [station] [network]` - Gives the current weather for any station being tracked through Iowa State University. A list of networks and stations can be found here: https://mesonet.agron.iastate.edu/sites/locate.php - Aliases: `obs`, `currentweather`, `current`, \n\n**Prefix `nohios`,`nohio`, `nhi`:**\n`help` - How to play the nohio minigame (only active in #nohios).\n\nIf something is broken ping the *fuck* out of @AustinDevvania#2702 (you can do this by spamming `c pingaustin`).")
 
             elif any(x in message.content for x in ["shut the fuck up", "stfu"]) and austin:
                 await message.channel.send("Goodnight!")
