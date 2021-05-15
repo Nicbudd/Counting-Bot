@@ -211,8 +211,11 @@ def auscoin(message):
 
 client = discord.Client()
 
+
+
 @client.event
 async def on_ready():
+
     print("We have logged in as {0.user}".format(client))
 
 
@@ -400,7 +403,7 @@ async def on_message(message):
                     await message.channel.send(f"HTTP Error: {response.status_code}. Is this the correct station?")
 
 
-            elif any(x in message.content for x in ["JSBCINENE", "sillin", "Sillin", "NECAPE"]):
+            elif any(x in message.content for x in ["JSBLRINENE", "sillin", "Sillin", "NECAPE"]):
 
                 MWN = requests.get("http://mesonet.agron.iastate.edu/json/current.py?station=MWN&network=NH_ASOS")
 
@@ -426,7 +429,14 @@ async def on_message(message):
 
 
             elif any(x in message.content for x in ["help", "h"]):
-                await message.channel.send("**Prefix `c`, `counting`, `count`, `cg`:**\n`astronauts` - Shows the astronauts currently in space. - Aliases: `astro`, `astros`.\n`yes/no` - When you're indecisive, ask counting bot, 'yes or no?'. - Aliases: `yesno`, `yes or no`, `y/n` `?`\n`hi` - Hello! - Aliases: `hey`, `sup`, `hello`.\n`pingaustin` - Pings Austin. Annoys the hell out of him. - Aliases: `pinga`, `paustin`, `ping austin`\n`manchester` - Current weather in Manchester, NH. - Aliases: `manch`, `KMHT`, `MHT`, \n`observations [station] [network]` - Gives the current weather for any station being tracked through Iowa State University. A list of networks and stations can be found here: https://mesonet.agron.iastate.edu/sites/locate.php - Aliases: `obs`, `currentweather`, `current`, \n\n**Prefix `nohios`,`nohio`, `nhi`:**\n`help` - How to play the nohio minigame (only active in #nohios).\n\nIf something is broken ping the *fuck* out of @AustinDevvania#2702 (you can do this by spamming `c pingaustin`).")
+
+                file = open("help.txt", "r", encoding="UTF-8")
+                help = ""
+                for line in file:
+                    help += line
+                file.close()
+
+                await message.channel.send(help)
 
             elif any(x in message.content for x in ["shut the fuck up", "stfu"]) and austin:
                 await message.channel.send("Goodnight!")
