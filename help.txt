@@ -3,6 +3,7 @@
 `yes/no` - When you're indecisive, ask counting bot, 'yes or no?'. - Aliases: `yesno`, `yes or no`, `y/n` `?`.
 `hi` - Hello! - Aliases: `hey`, `sup`, `hello`.
 `pingaustin` - Pings Austin. Annoys the hell out of him. - Aliases: `pinga`, `paustin`, `ping austin`.
+`dream` - Dream cheated. My pi simulates 305 blaze drops and 262 piglin trades over and over again. Will it ever be as lucky as Dream? No. - Aliases: `dreamluck`.
 
 *Weather*
 `manchester` - Current weather in Manchester, NH. - Aliases: `manch`, `KMHT`, `MHT`.

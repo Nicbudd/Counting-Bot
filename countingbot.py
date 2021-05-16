@@ -424,7 +424,7 @@ async def on_message(message):
                 else:
                     await message.channel.send(f"HTTP Error: {MWN.status_code} and {IZG.status_code}")
 
-            elif any(x in message.content for x in ["dream", "dreamluck", "blazeluck", "pearlluck"]):
+            elif any(x in message.content for x in ["dream", "dreamluck"]):
 
                 dreamFile = open("dream.txt", "r")
 
