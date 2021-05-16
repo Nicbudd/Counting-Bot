@@ -424,7 +424,29 @@ async def on_message(message):
                 else:
                     await message.channel.send(f"HTTP Error: {MWN.status_code} and {IZG.status_code}")
 
+            elif any(x in message.content for x in ["dream", "dreamluck", "blazeluck", "pearlluck"]):
 
+                dreamFile = open("dream.txt", "r")
+
+                # rods,pearls,attempts,execTime,dateTimeFound
+                # 0,0,0,0,0,0
+
+                data = ""
+                for line in dreamFile:
+                    data = line.split(",")
+
+                dreamMaxRods, dreamMaxPearls, maxAttempts, dateTimeFound, attempts, execTime = data
+
+                execTime = int(float(execTime))
+                execpersec = round(int(attempts) / execTime, 1)
+
+                dreamFile.close()
+
+                hhmmss = f"{math.floor(execTime / (60*60)):02d}:{math.floor(execTime / (60))%60:02d}:{execTime%60:02d}"
+
+
+                await message.channel.send(f"Current record: `{dreamMaxRods}` rods, `{dreamMaxPearls}` pearls. Found on `{dateTimeFound}` after `{maxAttempts}` attempts.")
+                await message.channel.send(f"Currently on `{attempts}` attempts after `{hhmmss}` hh:mm:ss, running at `{execpersec}` attempts per second")
 
 
 
