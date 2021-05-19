@@ -45,18 +45,20 @@ while True:
         if random.random() < 0.5:
             rods += 1
 
-    for x in range(262):
-        if random.random() < (20/423):
-            pearls += 1
+    if rods >= dreamMaxRods:
 
-    if (rods >= dreamMaxRods and pearls >= dreamMaxPearls) or (rods >= 211 and pearls >= dreamMaxPearls) or (rods >= dreamMaxRods and pearls >= 42):
-        dreamMaxRods = rods
-        dreamMaxPearls = pearls
+        for x in range(262):
+            if random.random() < (20/423):
+                pearls += 1
 
-        dateTimeFound = dt.datetime.now()
-        maxAttempts = attempts
+        if (rods >= dreamMaxRods and pearls >= dreamMaxPearls) or (rods >= 211 and pearls >= dreamMaxPearls) or (rods >= dreamMaxRods and pearls >= 42):
+            dreamMaxRods = rods
+            dreamMaxPearls = pearls
 
-        update(startTime, execTime)
+            dateTimeFound = dt.datetime.now()
+            maxAttempts = attempts
+
+            update(startTime, execTime)
 
     attempts += 1
 
