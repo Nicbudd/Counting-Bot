@@ -111,7 +111,6 @@ async def on_message(message):
 
 
 
-
 file = open("token.config", "r")
 
 for line in file:
