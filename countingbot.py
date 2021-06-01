@@ -1,9 +1,63 @@
-import math, discord, random, csv, datetime, requests
-import os
+import math, discord, requests
 
 
-def ispalin(num):
-    num = str(abs(int(num)))
+def numberinfo(message):
+
+    channel = message.channel.name
+
+
+    #find what rules the channel has
+
+    skipinitial = ""
+    allowedchar = "0123456789"
+    hasnumbers = True
+    integer = True
+
+
+    if channel == "negative-counting":
+        skipinitial = "-"
+
+    elif channel == "counting-decimal":
+        skipinitial = "0."
+        integer = False
+
+    elif channel == "binary-counting":
+        allowedchar = "01"
+        integer = False
+
+    elif channel == "roman-numeral-counting":
+        allowedchar = "IVXLCDM"
+        integer = False
+
+    elif channel == "hexadecimal-counting":
+        allowedchar = "0123456789ABCDEF"
+        integer = False
+
+    elif channel in ["counting-but-nsfw", "counting-but-words"]:
+        allowedchar = "ABCDEFGHIJKLMNOPQRSTUVWXYZ-"
+        integer = False
+
+    elif channel in ["counting-but-gifs", "tally-counting", "unicode-counting", "counting-but-letters"]:
+        hasnumbers = False
+        integer = False
+
+
+
+    #detect the number
+
+    num = ""
+
+    if hasnumbers:
+        initial = True
+        for x in message.content.upper():
+            if initial == True and x in skipinitial:
+                continue
+            elif x in allowedchar:
+                first = False
+                num += x
+            else:
+                break
+
 
     palin = True
     for x in range(math.floor(len(num) / 2)):
@@ -11,13 +65,19 @@ def ispalin(num):
         if not (oppPair[0] == oppPair[1]):
             palin = False
 
-    if int(num) < 100:
+
+    if len(num) <= 2:
         palin = False
 
-    return palin
+    try:
+        numtest = int(num)
+    except:
+        integer = False
 
 
-triesPerDay = 5
+    return num, palin, integer
+
+
 
 client = discord.Client()
 
@@ -54,19 +114,11 @@ async def on_message(message):
         await message.channel.send("Hey everyone! I'm going down for a few minute while Austin configures the raspberry pi to stay running over his vacation.")
 
 
-    num = ""
-
-    for x in message.content:
-        if x.isdigit():
-            num += x
-        elif x == "-":
-            continue
-        else:
-            break
+    num, palin, integer = numberinfo(message)
 
     if not(num == ""):
 
-        if ispalin(num):
+        if palin:
             await message.add_reaction(discord.utils.get(client.emojis, name="palindrome"))
             print("Palindrome!")
             print(message.content)
@@ -96,7 +148,8 @@ async def on_message(message):
             print(message.content)
             print("")
 
-        if "fact" in message.content:
+        if "fact" in message.content and integer:
+
             url = "http://www.numbersapi.com/" + num
 
             fact1 = requests.get(url)
