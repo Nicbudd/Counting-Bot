@@ -153,6 +153,8 @@ def numberinfo(message):
         integer = False
         checkForPrime = False
 
+    elif channel == "prime-counting":
+        checkForPrime = False
 
     #detect the number
 
@@ -187,7 +189,8 @@ def numberinfo(message):
     except:
         integer = False
     else:
-        prime = primeCheck(numtest)
+        if checkForPrime:
+            prime = primeCheck(numtest)
 
 
 
