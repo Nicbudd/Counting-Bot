@@ -87,7 +87,7 @@ def primeCheck(num):
 
     prime = True
 
-    if num > 1 and num < 1e7:
+    if num > 1 and num < 1e6:
         if num < 10000:
             prime = num in primes
         else:
