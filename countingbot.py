@@ -192,12 +192,14 @@ def numberinfo(message):
         if checkForPrime:
             prime = primeCheck(numtest)
 
-
-
-
-
     return num, palin, integer, prime
 
+
+
+def writePixel(flag):
+    file = open("../neopixels.txt", "a")
+    file.write(flag)
+    file.close()
 
 
 client = discord.Client()
@@ -241,39 +243,27 @@ async def on_message(message):
 
         if palin:
             await message.add_reaction(discord.utils.get(client.emojis, name="palindrome"))
-            print("Palindrome!")
-            print(message.content)
-            print("")
+            writePixel("palin")
 
         if prime:
             await message.add_reaction(discord.utils.get(client.emojis, name="prime"))
-            print("Prime!")
-            print(message.content)
-            print("")
+            writePixel("prime")
 
         if "69" in num:
             await message.add_reaction("🍆")
-            print("🍆")
-            print(message.content)
-            print("")
+            writePixel("69")
 
         if "420" in num:
             await message.add_reaction(discord.utils.get(client.emojis, name="weedwalk"))
-            print("Blaze it")
-            print(message.content)
-            print("")
+            writePixel("420")
 
         if "621" in num:
             await message.add_reaction(discord.utils.get(client.emojis, name="621"))
-            print("OwO")
-            print(message.content)
-            print("")
+            writePixel("621")
 
         if "666" in num:
             await message.add_reaction("😈")
-            print("😈")
-            print(message.content)
-            print("")
+            writePixel("666")
 
         if "fact" in message.content and integer:
 
