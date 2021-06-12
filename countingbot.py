@@ -197,9 +197,13 @@ def numberinfo(message):
 
 
 def writePixel(flag):
-    file = open("../neopixels.txt", "a")
-    file.write(flag)
-    file.close()
+    try:
+        file = open("../neopixels.txt", "a")
+    except IOError:
+        print(flag)
+    else:
+        file.write(flag + "\n")
+        file.close()
 
 
 client = discord.Client()
