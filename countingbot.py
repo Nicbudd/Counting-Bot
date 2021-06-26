@@ -240,6 +240,11 @@ async def on_message(message):
         await message.delete()
         await message.channel.send("Hey everyone! I'm going down for a few minute while Austin configures the raspberry pi to stay running over his vacation.")
 
+    if message.channel.name == "count-when-u-piss":
+        await message.add_reaction("💦")
+
+    if message.channel.name == "count-when-u-shit":
+        await message.add_reaction("💩")
 
     num, palin, integer, prime = numberinfo(message)
 
