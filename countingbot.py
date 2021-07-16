@@ -2,25 +2,32 @@ import json
 import math, discord, requests, time
 
 primes = set()
+fibonaccis = set()
 
 def primeCheck(num):
     startTime = time.time()
 
     global primes
-    prime = True
 
     if num > 1 and num < 15e6:
         prime = num in primes
-
     else:
         prime = False
 
     execTime = time.time() - startTime
-
-
     print(f"Number: {num} Prime Response Time: {execTime}s, Result: {prime}")
-
     return prime
+
+def fibonacciCheck(num):
+    startTime = time.time()
+
+    global fibonaccis
+    fibo = num in fibonaccis
+
+    execTime = time.time() - startTime
+    print(f"Number: {num} Fibonacci Response Time: {execTime}s, Result: {fibo}")
+    return fibo
+
 
 def numberinfo(message):
 
@@ -34,7 +41,7 @@ def numberinfo(message):
     hasnumbers = True
     integer = True
     checkForPrime = True
-
+    checkForFibonacci = True
 
     if channel == "negative-counting":
         skipinitial = "-"
@@ -42,34 +49,36 @@ def numberinfo(message):
     elif channel == "counting-decimal":
         skipinitial = "0."
         integer = False
-        checkForPrime = False
 
     elif channel == "binary-counting":
         allowedchar = "01"
         integer = False
-        checkForPrime = False
 
     elif channel == "roman-numeral-counting":
         allowedchar = "IVXLCDM"
         integer = False
-        checkForPrime = False
 
     elif channel == "hexadecimal-counting":
         allowedchar = "0123456789ABCDEF"
         integer = False
-        checkForPrime = False
 
     elif channel in ["counting-but-nsfw", "counting-but-words"]:
         allowedchar = "ABCDEFGHIJKLMNOPQRSTUVWXYZ-"
         integer = False
-        checkForPrime = False
 
     elif channel in ["counting-but-gifs", "tally-counting", "unicode-counting", "counting-but-letters"]:
         hasnumbers = False
         integer = False
-        checkForPrime = False
 
     elif channel == "prime-counting":
+        checkForPrime = False
+
+    elif channel == "fibonacci-sequence-counting":
+        checkForFibonacci = False
+
+
+    if not integer:
+        checkForFibonacci = False
         checkForPrime = False
 
     #detect the number
@@ -99,6 +108,7 @@ def numberinfo(message):
         palin = False
 
     prime = False
+    fibonacci = False
 
     try:
         numtest = int(num)
@@ -107,8 +117,10 @@ def numberinfo(message):
     else:
         if checkForPrime:
             prime = primeCheck(numtest)
+        if checkForFibonacci:
+            fibonacci = fibonacciCheck(numtest)
 
-    return num, palin, integer, prime
+    return num, palin, integer, prime, fibonacci
 
 
 
@@ -129,11 +141,14 @@ async def on_ready():
 
     print("We have logged in as {0.user}".format(client))
 
-    global primes
+    global primes, fibonaccis
     with open("primes1.json") as file:
         primes = set(json.load(file))
 
-    print("primes loaded")
+    with open("fibonacci.json") as file:
+        fibonaccis = set(json.load(file))
+
+    print("loaded primes and fibonacci")
 
 
 @client.event
@@ -168,7 +183,7 @@ async def on_message(message):
     if message.channel.name == "count-when-u-shit":
         await message.add_reaction("💩")
 
-    num, palin, integer, prime = numberinfo(message)
+    num, palin, integer, prime, fibonacci = numberinfo(message)
 
     if not(num == ""):
 
@@ -179,6 +194,10 @@ async def on_message(message):
         if prime:
             await message.add_reaction(discord.utils.get(client.emojis, name="prime"))
             writePixel("prime")
+
+        if fibonacci:
+            await message.add_reaction(discord.utils.get(client.emojis, name="phi"))
+            writePixel("phi")
 
         if "69" in num:
             await message.add_reaction("🍆")
