@@ -18,7 +18,7 @@ def primeCheck(num):
     execTime = time.time() - startTime
 
 
-    print(f"Number: {num} Prime Response Time: {execTime:.10f}s, Result: {prime}")
+    print(f"Number: {num} Prime Response Time: {execTime}s, Result: {prime}")
 
     return prime
 
